@@ -23,6 +23,11 @@ public class A {
         // default 접근 제한자면 class A와 같은 패키지에 있는 클래스에서 접근 가능
     }
 
+    private class D {
+        public String a;
+        // private 중첩 클래스라면 public 필드 오케이
+    }
+
     public static void main(String[] args) {
         Arrays.stream(A.strings).forEach(System.out::println);
         Arrays.stream(A.strings).map(s -> s + "한글").forEach(System.out::println);
