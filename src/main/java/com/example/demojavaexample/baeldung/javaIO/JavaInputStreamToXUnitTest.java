@@ -1,28 +1,24 @@
 package com.example.demojavaexample.baeldung.javaIO;
 
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.Test;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.Scanner;
-import java.util.UUID;
-
-import org.apache.commons.io.IOUtils;
-
-import org.junit.jupiter.api.Test;
 
 import static java.nio.channels.Channels.newChannel;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JavaInputStreamToXUnitTest {
+class JavaInputStreamToXUnitTest {
     private static final int DEFAULT_SIZE = 1500000;
 
     // tests - InputStream to String
@@ -51,7 +47,7 @@ public class JavaInputStreamToXUnitTest {
         assertThat(text, equalTo(originalString));
     }
 
-//    // tests - InputStream to byte[]
+    // tests - InputStream to byte[]
 
     @Test
     final void givenUsingPlainJavaOnUnknownSizeStream_whenConvertingAnInputStreamToAByteArray_thenCorrect() throws IOException {
@@ -75,7 +71,7 @@ public class JavaInputStreamToXUnitTest {
     }
 
     @Test
-    public void givenUsingCoreClasses_whenByteArrayInputStreamToAByteBuffer_thenLengthMustMatch()
+    void givenUsingCoreClasses_whenByteArrayInputStreamToAByteBuffer_thenLengthMustMatch()
             throws IOException {
         byte[] input = new byte[] { 0, 1, 2 };
         InputStream initialStream = new ByteArrayInputStream(input);
@@ -88,7 +84,7 @@ public class JavaInputStreamToXUnitTest {
     }
 
     @Test
-    public void givenUsingCommonsIo_whenByteArrayInputStreamToAByteBuffer_thenLengthMustMatch()
+    void givenUsingCommonsIo_whenByteArrayInputStreamToAByteBuffer_thenLengthMustMatch()
             throws IOException {
         byte[] input = new byte[] { 0, 1, 2 };
         InputStream initialStream = new ByteArrayInputStream(input);
@@ -98,87 +94,55 @@ public class JavaInputStreamToXUnitTest {
 
         assertEquals(byteBuffer.position(), input.length);
     }
-//
-//    // tests - InputStream to File
-//
-//    @Test
-//    public final void whenConvertingToFile_thenCorrect() throws IOException {
-//        final InputStream initialStream = new FileInputStream(new File("src/test/resources/sample.txt"));
-//        final byte[] buffer = new byte[initialStream.available()];
-//        initialStream.read(buffer);
-//
-//        final File targetFile = new File("src/test/resources/targetFile.tmp");
-//        final OutputStream outStream = new FileOutputStream(targetFile);
-//        outStream.write(buffer);
-//
-//        IOUtils.closeQuietly(initialStream);
-//        IOUtils.closeQuietly(outStream);
-//    }
-//
-//    @Test
-//    public final void whenConvertingInProgressToFile_thenCorrect() throws IOException {
-//        final InputStream initialStream = new FileInputStream(new File("src/test/resources/sample.txt"));
-//        final File targetFile = new File("src/test/resources/targetFile.tmp");
-//        final OutputStream outStream = new FileOutputStream(targetFile);
-//
-//        final byte[] buffer = new byte[8 * 1024];
-//        int bytesRead;
-//        while ((bytesRead = initialStream.read(buffer)) != -1) {
-//            outStream.write(buffer, 0, bytesRead);
-//        }
-//
-//        IOUtils.closeQuietly(initialStream);
-//        IOUtils.closeQuietly(outStream);
-//    }
-//
-//    @Test
-//    public final void whenConvertingAnInProgressInputStreamToFile_thenCorrect2() throws IOException {
-//        final InputStream initialStream = new FileInputStream(new File("src/test/resources/sample.txt"));
-//        final File targetFile = new File("src/test/resources/targetFile.tmp");
-//
-//        java.nio.file.Files.copy(initialStream, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-//
-//        IOUtils.closeQuietly(initialStream);
-//    }
-//
-//    @Test
-//    public final void whenConvertingInputStreamToFile_thenCorrect3() throws IOException {
-//        final InputStream initialStream = new FileInputStream(new File("src/test/resources/sample.txt"));
-//        final byte[] buffer = new byte[initialStream.available()];
-//        initialStream.read(buffer);
-//
-//        final File targetFile = new File("src/test/resources/targetFile.tmp");
-//        Files.write(buffer, targetFile);
-//
-//        IOUtils.closeQuietly(initialStream);
-//    }
-//
-//    @Test
-//    public final void whenConvertingInputStreamToFile_thenCorrect4() throws IOException {
-//        final InputStream initialStream = FileUtils.openInputStream(new File("src/test/resources/sample.txt"));
-//
-//        final File targetFile = new File("src/test/resources/targetFile.tmp");
-//
-//        FileUtils.copyInputStreamToFile(initialStream, targetFile);
-//    }
-//
-//    @Test
-//    public final void givenUsingPlainJava_whenConvertingAnInputStreamToString_thenCorrect() throws IOException {
-//        String originalString = randomAlphabetic(8);
-//        InputStream inputStream = new ByteArrayInputStream(originalString.getBytes());
-//
-//        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-//        int nRead;
-//        byte[] data = new byte[1024];
-//        while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-//            buffer.write(data, 0, nRead);
-//        }
-//
-//        buffer.flush();
-//        byte[] byteArray = buffer.toByteArray();
-//
-//        String text = new String(byteArray, StandardCharsets.UTF_8);
-//        assertThat(text, equalTo(originalString));
-//    }
 
+    // tests - InputStream to File
+
+    @Test
+    final void whenConvertingToFile_thenCorrect() throws IOException {
+        final InputStream initialStream = new FileInputStream(new File("src/test/resources/sample.txt"));
+        final byte[] buffer = new byte[initialStream.available()];
+        initialStream.read(buffer);
+
+        final File targetFile = new File("src/test/resources/targetFile.tmp");
+        final OutputStream outStream = new FileOutputStream(targetFile);
+        outStream.write(buffer);
+
+        IOUtils.closeQuietly(initialStream);
+        IOUtils.closeQuietly(outStream);
+    }
+
+    @Test
+    final void whenConvertingInProgressToFile_thenCorrect() throws IOException {
+        final InputStream initialStream = new FileInputStream(new File("src/test/resources/sample.txt"));
+        final File targetFile = new File("src/test/resources/targetFile.tmp");
+        final OutputStream outStream = new FileOutputStream(targetFile);
+
+        final byte[] buffer = new byte[8 * 1024];
+        int bytesRead;
+        while ((bytesRead = initialStream.read(buffer)) != -1) {
+            outStream.write(buffer, 0, bytesRead);
+        }
+
+        IOUtils.closeQuietly(initialStream);
+        IOUtils.closeQuietly(outStream);
+    }
+
+    @Test
+    final void whenConvertingAnInProgressInputStreamToFile_thenCorrect2() throws IOException {
+        final InputStream initialStream = new FileInputStream(new File("src/test/resources/sample.txt"));
+        final File targetFile = new File("src/test/resources/targetFile.tmp");
+
+        java.nio.file.Files.copy(initialStream, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        IOUtils.closeQuietly(initialStream);
+    }
+
+    @Test
+    final void whenConvertingInputStreamToFile_thenCorrect4() throws IOException {
+        final InputStream initialStream = FileUtils.openInputStream(new File("src/test/resources/sample.txt"));
+
+        final File targetFile = new File("src/test/resources/targetFile.tmp");
+
+        FileUtils.copyInputStreamToFile(initialStream, targetFile);
+    }
 }
