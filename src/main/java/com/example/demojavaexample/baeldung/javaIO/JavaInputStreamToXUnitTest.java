@@ -2,6 +2,8 @@ package com.example.demojavaexample.baeldung.javaIO;
 
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
@@ -13,6 +15,8 @@ import java.util.UUID;
 import org.apache.commons.io.IOUtils;
 
 import org.junit.jupiter.api.Test;
+
+import static java.nio.channels.Channels.newChannel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -48,40 +52,52 @@ public class JavaInputStreamToXUnitTest {
     }
 
 //    // tests - InputStream to byte[]
-//
-//    @Test
-//    public final void givenUsingPlainJavaOnFixedSizeStream_whenConvertingAnInputStreamToAByteArray_thenCorrect() throws IOException {
-//        final InputStream initialStream = new ByteArrayInputStream(new byte[] { 0, 1, 2 });
-//        final byte[] targetArray = new byte[initialStream.available()];
-//        initialStream.read(targetArray);
-//    }
-//
-//    @Test
-//    public final void givenUsingPlainJavaOnUnknownSizeStream_whenConvertingAnInputStreamToAByteArray_thenCorrect() throws IOException {
-//        final InputStream is = new ByteArrayInputStream(new byte[] { 0, 1, 2 });
-//
-//        final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-//        int nRead;
-//        final byte[] data = new byte[1024];
-//        while ((nRead = is.read(data, 0, data.length)) != -1) {
-//            buffer.write(data, 0, nRead);
-//        }
-//
-//        buffer.flush();
-//        final byte[] byteArray = buffer.toByteArray();
-//    }
-//
-//    @Test
-//    public final void givenUsingGuava_whenConvertingAnInputStreamToAByteArray_thenCorrect() throws IOException {
-//        final InputStream initialStream = ByteSource.wrap(new byte[] { 0, 1, 2 }).openStream();
-//        final byte[] targetArray = ByteStreams.toByteArray(initialStream);
-//    }
-//
-//    @Test
-//    public final void givenUsingCommonsIO_whenConvertingAnInputStreamToAByteArray_thenCorrect() throws IOException {
-//        final InputStream initialStream = new ByteArrayInputStream(new byte[] { 0, 1, 2 });
-//        final byte[] targetArray = IOUtils.toByteArray(initialStream);
-//    }
+
+    @Test
+    final void givenUsingPlainJavaOnUnknownSizeStream_whenConvertingAnInputStreamToAByteArray_thenCorrect() throws IOException {
+        final InputStream is = new ByteArrayInputStream(new byte[] { 0, 1, 2 });
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int nRead;
+        final byte[] data = new byte[1024];
+        while ((nRead = is.read(data, 0, data.length)) != -1) {
+            baos.write(data, 0, nRead);
+        }
+
+        baos.flush();
+        final byte[] byteArray = baos.toByteArray();
+    }
+
+    @Test
+    final void givenUsingCommonsIO_whenConvertingAnInputStreamToAByteArray_thenCorrect() throws IOException {
+        final InputStream initialStream = new ByteArrayInputStream(new byte[] { 0, 1, 2 });
+        final byte[] targetArray = IOUtils.toByteArray(initialStream);
+    }
+
+    @Test
+    public void givenUsingCoreClasses_whenByteArrayInputStreamToAByteBuffer_thenLengthMustMatch()
+            throws IOException {
+        byte[] input = new byte[] { 0, 1, 2 };
+        InputStream initialStream = new ByteArrayInputStream(input);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(3);
+        while (initialStream.available() > 0) {
+            byteBuffer.put((byte) initialStream.read());
+        }
+
+        assertEquals(byteBuffer.position(), input.length);
+    }
+
+    @Test
+    public void givenUsingCommonsIo_whenByteArrayInputStreamToAByteBuffer_thenLengthMustMatch()
+            throws IOException {
+        byte[] input = new byte[] { 0, 1, 2 };
+        InputStream initialStream = new ByteArrayInputStream(input);
+        ByteBuffer byteBuffer = ByteBuffer.allocate(3);
+        ReadableByteChannel channel = newChannel(initialStream);
+        IOUtils.readFully(channel, byteBuffer);
+
+        assertEquals(byteBuffer.position(), input.length);
+    }
 //
 //    // tests - InputStream to File
 //
