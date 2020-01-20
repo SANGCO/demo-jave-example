@@ -3,6 +3,7 @@ package com.example.demojavaexample.baeldung.javaIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.CharSequenceReader;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
@@ -144,5 +145,31 @@ class JavaInputStreamToXUnitTest {
         final File targetFile = new File("src/test/resources/targetFile.tmp");
 
         FileUtils.copyInputStreamToFile(initialStream, targetFile);
+    }
+
+    // tests - InputStream to Reader
+
+    @Test
+    public void givenUsingPlainJava_whenConvertingInputStreamIntoReader_thenCorrect()
+            throws IOException {
+        InputStream initialStream = new ByteArrayInputStream("With Java".getBytes());
+//        Reader reader = new StringReader("With Java");
+
+        Reader targetReader = new InputStreamReader(initialStream);
+
+        targetReader.close();
+    }
+
+    @Test
+    public void givenUsingCommonsIO_whenConvertingInputStreamIntoReader_thenCorrect()
+            throws IOException {
+        InputStream initialStream = IOUtils.toInputStream("With Commons IO");
+
+        byte[] buffer = IOUtils.toByteArray(initialStream);
+        Reader targetReader = new CharSequenceReader(new String(buffer));
+//        Reader targetReader = new CharSequenceReader(new String("With Commons IO".getBytes()));
+//        Reader targetReader = new CharSequenceReader("With Commons IO");
+
+        targetReader.close();
     }
 }
