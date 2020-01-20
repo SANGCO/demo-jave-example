@@ -11,6 +11,11 @@ public class DemoJavaExampleApplicationTests {
 
     @Test
     public void contextLoads() {
+        int a = 1;
+        int b = 2;
+
+        System.out.println(a == b);
+
     }
 
     @Test

@@ -33,7 +33,7 @@ public class A {
         Arrays.stream(A.strings).map(s -> s + "한글").forEach(System.out::println);
 
         System.out.println(string);
-//        string = "ABCDEF"; 값을 변경 할 수 없다.
+//        string = "ABCDEF"; //값을 변경 할 수 없다.
     }
 
 }
